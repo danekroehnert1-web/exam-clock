@@ -57,6 +57,13 @@
       opacity: 0;
       pointer-events: none;
     }
+
+    .am-pm {
+      font-size: clamp(1rem, 5vw, 8rem);
+      margin-left: 0.5em;
+      align-self: flex-end;
+      padding-bottom: 0.1em;
+    }
   </style>
 </head>
 <body>
@@ -69,6 +76,7 @@
     <span class="colon">:</span>
     <span class="digit" id="s1">0</span>
     <span class="digit" id="s2">0</span>
+    <span class="am-pm" id="amPm"></span>
   </div>
 
   <div class="date" id="dateDisplay">Loading date...</div>
@@ -76,22 +84,31 @@
   <script>
     function updateClock() {
       const now = new Date();
-      const h = String(now.getHours());
+      let h = now.getHours();
       const m = String(now.getMinutes()).padStart(2, '0');
       const s = String(now.getSeconds()).padStart(2, '0');
 
-      if (h.length === 1) {
+      const amPm = h >= 12 ? 'PM' : 'AM';
+
+      h = h % 12;
+      if (h === 0) h = 12; // 12 AM or 12 PM instead of 0
+
+      const hStr = String(h);
+
+      if (hStr.length === 1) {
         document.getElementById('h1').textContent = '';
-        document.getElementById('h2').textContent = h[0];
+        document.getElementById('h2').textContent = hStr[0];
       } else {
-        document.getElementById('h1').textContent = h[0];
-        document.getElementById('h2').textContent = h[1];
+        document.getElementById('h1').textContent = hStr[0];
+        document.getElementById('h2').textContent = hStr[1];
       }
 
       document.getElementById('m1').textContent = m[0];
       document.getElementById('m2').textContent = m[1];
       document.getElementById('s1').textContent = s[0];
       document.getElementById('s2').textContent = s[1];
+
+      document.getElementById('amPm').textContent = amPm;
     }
 
     function updateDate() {
