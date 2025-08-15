@@ -77,7 +77,7 @@
     <span class="colon">:</span>
     <span class="digit" id="m1">0</span>
     <span class="digit" id="m2">0</span>
-    <span class="colon">.</span> <!-- changed colon to dot here -->
+    <span class="colon">.</span>
     <span class="digit seconds" id="s1">0</span>
     <span class="digit seconds" id="s2">0</span>
     <span class="am-pm" id="amPm"></span>
@@ -86,64 +86,77 @@
   <div class="date" id="dateDisplay">Loading date...</div>
 
   <script>
-    function updateClock() {
-      const now = new Date();
-      let h = now.getHours();
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
+    document.addEventListener('DOMContentLoaded', () => {
+      function updateClock() {
+        const now = new Date();
+        let h = now.getHours();
+        const m = String(now.getMinutes()).padStart(2, '0');
+        const s = String(now.getSeconds()).padStart(2, '0');
 
-      const amPm = h >= 12 ? 'PM' : 'AM';
+        const amPm = h >= 12 ? 'PM' : 'AM';
 
-      h = h % 12;
-      if (h === 0) h = 12; // 12 AM or 12 PM instead of 0
+        h = h % 12;
+        if (h === 0) h = 12; // 12 AM or 12 PM instead of 0
 
-      const hStr = String(h);
+        const hStr = String(h);
 
-      if (hStr.length === 1) {
-        document.getElementById('h1').textContent = '';
-        document.getElementById('h2').textContent = hStr[0];
-      } else {
-        document.getElementById('h1').textContent = hStr[0];
-        document.getElementById('h2').textContent = hStr[1];
+        if (hStr.length === 1) {
+          document.getElementById('h1').textContent = '';
+          document.getElementById('h2').textContent = hStr[0];
+        } else {
+          document.getElementById('h1').textContent = hStr[0];
+          document.getElementById('h2').textContent = hStr[1];
+        }
+
+        document.getElementById('m1').textContent = m[0];
+        document.getElementById('m2').textContent = m[1];
+        document.getElementById('s1').textContent = s[0];
+        document.getElementById('s2').textContent = s[1];
+
+        document.getElementById('amPm').textContent = amPm;
       }
 
-      document.getElementById('m1').textContent = m[0];
-      document.getElementById('m2').textContent = m[1];
-      document.getElementById('s1').textContent = s[0];
-      document.getElementById('s2').textContent = s[1];
+      function updateDate() {
+        const now = new Date();
 
-      document.getElementById('amPm').textContent = amPm;
-    }
+        const weekday = now.toLocaleDateString(undefined, { weekday: 'long' });
+        const day = now.getDate();
+        const month = now.toLocaleDateString(undefined, { month: 'long' });
 
-    function updateDate() {
-      const now = new Date();
+        const getOrdinal = (n) => {
+          const v = n % 100;
+          if (v >= 11 && v <= 13) return "th";
+          switch (v % 10) {
+            case 1: return "st";
+            case 2: return "nd";
+            case 3: return "rd";
+            default: return "th";
+          }
+        };
 
-      const weekday = now.toLocaleDateString(undefined, { weekday: 'long' });
-      const day = now.getDate();
-      const month = now.toLocaleDateString(undefined, { month: 'long' });
+        const dateWithOrdinal = `${day}${getOrdinal(day)}`;
+        const formatted = `${weekday}, ${dateWithOrdinal} ${month}`;
 
-      const getOrdinal = (n) => {
-        const v = n % 100;
-        if (v >= 11 && v <= 13) return "th";
-        switch (v % 10) {
-          case 1: return "st";
-          case 2: return "nd";
-          case 3: return "rd";
-          default: return "th";
+        document.getElementById('dateDisplay').textContent = formatted;
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      let currentDateString = '';
+      function checkAndUpdateDate() {
+        const now = new Date();
+        const newDateString = now.toDateString();
+        if (newDateString !== currentDateString) {
+          updateDate();
+          currentDateString = newDateString;
         }
-      };
+      }
 
-      const dateWithOrdinal = `${day}${getOrdinal(day)}`;
-      const formatted = `${weekday}, ${dateWithOrdinal} ${month}`;
-
-      document.getElementById('dateDisplay').textContent = formatted;
-    }
-
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    let currentDateString = '';
-    function checkAndUpdateDate() {
-      const now = new Date();
-      const newDateString = now.toDateString();
-      if (newDateString !== currentDateString) {
+      updateDate();
+      currentDateString = new Date().toDateString();
+      setInterval(checkAndUpdateDate, 60 * 1000);
+    });
+  </script>
+</body>
+</html>
