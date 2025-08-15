@@ -64,6 +64,10 @@
       align-self: flex-end;
       padding-bottom: 0.1em;
     }
+
+    .seconds {
+      font-size: clamp(2rem, 8vw, 12rem);
+    }
   </style>
 </head>
 <body>
@@ -73,9 +77,9 @@
     <span class="colon">:</span>
     <span class="digit" id="m1">0</span>
     <span class="digit" id="m2">0</span>
-    <span class="colon">:</span>
-    <span class="digit" id="s1">0</span>
-    <span class="digit" id="s2">0</span>
+    <span class="colon">.</span> <!-- changed colon to dot here -->
+    <span class="digit seconds" id="s1">0</span>
+    <span class="digit seconds" id="s2">0</span>
     <span class="am-pm" id="amPm"></span>
   </div>
 
@@ -143,14 +147,3 @@
       const now = new Date();
       const newDateString = now.toDateString();
       if (newDateString !== currentDateString) {
-        updateDate();
-        currentDateString = newDateString;
-      }
-    }
-
-    updateDate();
-    currentDateString = new Date().toDateString();
-    setInterval(checkAndUpdateDate, 60 * 1000);
-  </script>
-</body>
-</html>
